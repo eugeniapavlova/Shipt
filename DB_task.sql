@@ -1,6 +1,7 @@
-drop table if exists Orders;
-drop table if exists Shoppers;
-drop table if exists Customers;
+
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Shoppers;
+DROP TABLE IF EXISTS Customers;
 
 CREATE TABLE Shoppers (
     id bigint PRIMARY KEY,
@@ -18,26 +19,39 @@ CREATE TABLE Customers (
 );
 
 CREATE TABLE Orders (
-    id bigint NOT NULL,
-    customer_id bigint REFERENCES Customers,
-    shopper_id bigint REFERENCES Shoppers,
-    Store VARCHAR(254)
+    id bigint PRIMARY KEY,
+    customer_id bigint NOT NULL,
+    shopper_id bigint NOT NULL,
+    Store VARCHAR(254),
+    FOREIGN KEY (customer_id) REFERENCES Customers(id) ON UPDATE CASCADE ON
+DELETE CASCADE,
+    FOREIGN KEY (shopper_id) REFERENCES Shoppers(id) ON UPDATE CASCADE ON
+DELETE CASCADE
 );
 
-INSERT INTO "customers"("id","first_name","last_name","phone","address") VALUES (1,E'Customer1_fn',E'Customer1_ln',E'408-000-00-12',E'Some Addres1'), (2,E'Customer2_fn',E'Customer2_ln',E'408-000-00-13',E'Some Addres2');
+INSERT INTO Customers
+    (id,first_name,last_name,phone,address)
+VALUES
+    (1,'Customer1_fn','Customer1_ln','408-000-00-12','Some Addres1'),
+    (2,'Customer2_fn','Customer2_ln','408-000-00-13','Some Addres2');
 
-INSERT INTO "shoppers"("id","first_name","last_name","phone") VALUES (1,E'Shopper_fn_1',E'Shopper_ln_2',E'409-431-0000'),
-(2,E'Shopper_fn_2',E'Shopper_ln_4',E'409-432-0000');
+INSERT INTO Shoppers
+    (id,first_name,last_name,phone)
+VALUES
+    (1,'Shopper_fn_1','Shopper_ln_2','409-431-0000'),
+    (2,'Shopper_fn_2','Shopper_ln_4','409-432-0000');
 
-INSERT INTO "orders"("id","customer_id","shopper_id","store") VALUES
-(1,1,1,E'Store1'),
-(1,1,2,E'Store1'),
-(1,2,2,E'Store2');
+INSERT INTO Orders
+    (id,customer_id,shopper_id,store)
+VALUES
+    (1,1,1,'Store1'),
+    (2,1,2,'Store1'),
+    (3,2,2,'Store2');
 
 SELECT id, store from Orders where customer_id = 1 and shopper_id = 1;
 
 /*
- Relations: 
+ Relations:
     Customers to Orders -> 1 to * (Many)
     Shoppers to Orders ->  1 to * (Many)
     Customers to Shoppers -> * (Many) to * (Many)
